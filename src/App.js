@@ -5,13 +5,14 @@ import Navbar from './components/Navbar';
 import Index from './user/Index';
 import Login from './auth/Login';
 import Register from './auth/Register';
-import PostWriting from './user/PostWriting';
-import Product from './user/Product';
+import PostWriting from './user/Posts/Index';
+import Product from './user/Product/Index';
 import AdminDashboard from './admin/Dashboard';
 import UserManagement from './admin/UserManagement';
 import UserDashboard from './user/UserDashboard';
 import ProductDetailPage from './user/Product/ProductDetailPage';
 import PostDetailPage from './user/Posts/PostDetailPage';
+import CreatePost from './user/Posts/CreatePost';
 
 function App() {
   // Remove API call logic from here, as Index page will be the home
@@ -25,6 +26,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/post" element={<PostWriting />} />
+            <Route path="/post/create" element={<CreatePost />} />
             <Route path="/product" element={<Product />} />
             <Route path="/dashboard" element={<UserDashboard />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />

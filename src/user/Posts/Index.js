@@ -55,6 +55,12 @@ const PostsIndex = () => {
 
     return (
         <div>
+            <button
+                style={{ marginBottom: 20, padding: '10px 24px', background: '#007bff', color: '#fff', border: 'none', borderRadius: 6, fontSize: '1.1rem', cursor: 'pointer' }}
+                onClick={() => navigate('/post/create')}
+            >
+                Create a Post
+            </button>
             <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
                 <input
                     type="text"
