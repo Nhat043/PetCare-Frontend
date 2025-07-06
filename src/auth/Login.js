@@ -37,12 +37,14 @@ const Login = () => {
                 setMessage('Login successful!');
                 console.log('Login successful:', data);
 
-                // Store user data in localStorage
-                localStorage.setItem('userData', JSON.stringify({
+                // Store user data in sessionStorage
+                sessionStorage.setItem('userData', JSON.stringify({
                     user_id: data.user_id,
                     role_id: data.role_id,
                     email: formData.email
                 }));
+                // Notify other components
+                window.dispatchEvent(new Event('user-auth-changed'));
 
                 // Redirect based on role_id
                 if (data.role_id === 1) {
