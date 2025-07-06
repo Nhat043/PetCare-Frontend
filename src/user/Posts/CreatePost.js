@@ -5,6 +5,7 @@ import 'quill/dist/quill.snow.css';
 
 const POSTS_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/posts';
 const IMAGE_UPLOAD_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/posts/upload-image';
+const CATEGORY_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/category';
 
 const CreatePost = () => {
     const navigate = useNavigate();
@@ -13,10 +14,36 @@ const CreatePost = () => {
     const [title, setTitle] = useState('');
     const [categoryId, setCategoryId] = useState('');
     const [userId, setUserId] = useState('');
+    const [categories, setCategories] = useState([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
+    // Fetch categories from API
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch(CATEGORY_API);
+            const data = await response.json();
+            if (response.ok) {
+                setCategories(data.categories || []);
+            } else {
+                console.error('Failed to fetch categories:', data);
+            }
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    };
+
     useEffect(() => {
+        // Get user_id from sessionStorage
+        const userData = sessionStorage.getItem('userData');
+        if (userData) {
+            const parsedUserData = JSON.parse(userData);
+            setUserId(parsedUserData.user_id.toString());
+        }
+
+        // Fetch categories
+        fetchCategories();
+
         if (editorRef.current && !quillRef.current) {
             quillRef.current = new Quill(editorRef.current, {
                 theme: 'snow',
@@ -127,13 +154,23 @@ const CreatePost = () => {
                             <label htmlFor="title" style={{ display: 'block', marginBottom: 6, color: '#222', fontWeight: 'bold' }}>Title:</label>
                             <input id="title" type="text" value={title} onChange={e => setTitle(e.target.value)} style={{ width: '100%', padding: 10, borderRadius: 4, border: '1px solid #ccc', fontSize: '1rem' }} required />
                         </div>
+
                         <div style={{ marginBottom: 20 }}>
-                            <label htmlFor="userId" style={{ display: 'block', marginBottom: 6, color: '#222', fontWeight: 'bold' }}>User ID:</label>
-                            <input id="userId" type="number" value={userId} onChange={e => setUserId(e.target.value)} style={{ width: '100%', padding: 10, borderRadius: 4, border: '1px solid #ccc', fontSize: '1rem' }} required />
-                        </div>
-                        <div style={{ marginBottom: 20 }}>
-                            <label htmlFor="categoryId" style={{ display: 'block', marginBottom: 6, color: '#222', fontWeight: 'bold' }}>Category ID:</label>
-                            <input id="categoryId" type="number" value={categoryId} onChange={e => setCategoryId(e.target.value)} style={{ width: '100%', padding: 10, borderRadius: 4, border: '1px solid #ccc', fontSize: '1rem' }} required />
+                            <label htmlFor="categoryId" style={{ display: 'block', marginBottom: 6, color: '#222', fontWeight: 'bold' }}>Category:</label>
+                            <select
+                                id="categoryId"
+                                value={categoryId}
+                                onChange={e => setCategoryId(e.target.value)}
+                                style={{ width: '100%', padding: 10, borderRadius: 4, border: '1px solid #ccc', fontSize: '1rem' }}
+                                required
+                            >
+                                <option value="">Select a category</option>
+                                {categories.map(category => (
+                                    <option key={category.category_id} value={category.category_id}>
+                                        {category.category_name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                         {error && <div style={{ color: 'red', marginBottom: 16 }}>{error}</div>}
                         <button type="submit" disabled={loading} style={{ padding: '12px 32px', background: '#007bff', color: '#fff', border: 'none', borderRadius: 6, fontSize: '1.1rem', cursor: 'pointer', width: '100%' }}>
