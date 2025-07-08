@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout, isLoggedIn as checkIsLoggedIn, getCurrentUser } from '../auth/logout';
+import UserMiniNavbar from './UserMiniNavbar';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -30,10 +31,11 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="navbar">
+        <nav className="navbar" style={{ position: 'relative' }}>
+            {isLoggedIn && <UserMiniNavbar />}
             <ul>
                 <li><Link to="/dashboard#posts">Posts</Link></li>
-                <li><Link to="/product">Products</Link></li>
+                <li><Link to="/dashboard#products">Products</Link></li>
                 {userData && userData.role_id === 1 && (
                     <li><Link to="/admin/dashboard">Admin Dashboard</Link></li>
                 )}

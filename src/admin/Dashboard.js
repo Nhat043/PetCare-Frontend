@@ -9,7 +9,7 @@ const AdminDashboard = () => {
     };
 
     const handleContentManagement = () => {
-        navigate('/product');
+        navigate('/admin/products');
     };
 
     const handleAnalytics = () => {
@@ -18,75 +18,88 @@ const AdminDashboard = () => {
     };
 
     return (
-        <div style={{ padding: '20px' }}>
-            <h2>Admin Dashboard</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginTop: '20px' }}>
+        <div style={{ padding: '20px', minHeight: '100vh', background: '#23262b' }}>
+            <h2 style={{ color: '#fff', textAlign: 'center', marginBottom: 40, fontSize: '2.5rem', fontWeight: 'bold' }}>Admin Dashboard</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px', justifyContent: 'center', alignItems: 'center', maxWidth: 1000, margin: '0 auto' }}>
+                {/* Manage Users */}
                 <div style={{
-                    padding: '20px',
+                    padding: '32px',
                     border: '1px solid #ddd',
-                    borderRadius: '8px',
-                    backgroundColor: '#f8f9fa'
+                    borderRadius: '12px',
+                    backgroundColor: '#fff',
+                    boxShadow: '0 4px 24px #2222',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
                 }}>
-                    <h3>User Management</h3>
-                    <p>Manage user accounts and permissions</p>
+                    <h3 style={{ color: '#225', fontWeight: 'bold', fontSize: '2rem', marginBottom: 12 }}>User Management</h3>
+                    <p style={{ color: '#333', fontSize: '1.2rem', marginBottom: 24 }}>Manage user accounts and permissions</p>
                     <button
                         onClick={handleUserManagement}
                         style={{
-                            padding: '8px 16px',
+                            padding: '12px 32px',
                             backgroundColor: '#007bff',
                             color: 'white',
                             border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer'
+                            borderRadius: '6px',
+                            fontSize: '1.1rem',
+                            cursor: 'pointer',
+                            fontWeight: 'bold'
                         }}
                     >
                         Manage Users
                     </button>
                 </div>
-
+                {/* Manage Posts */}
                 <div style={{
-                    padding: '20px',
+                    padding: '32px',
                     border: '1px solid #ddd',
-                    borderRadius: '8px',
-                    backgroundColor: '#f8f9fa'
+                    borderRadius: '12px',
+                    backgroundColor: '#fff',
+                    boxShadow: '0 4px 24px #2222',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
                 }}>
-                    <h3>Content Management</h3>
-                    <p>Manage posts and products</p>
+                    <h3 style={{ color: '#225', fontWeight: 'bold', fontSize: '2rem', marginBottom: 12 }}>Post Management</h3>
+                    <p style={{ color: '#333', fontSize: '1.2rem', marginBottom: 24 }}>Manage posts on the platform</p>
                     <button
-                        onClick={handleContentManagement}
+                        onClick={() => navigate('/admin/posts')}
                         style={{
-                            padding: '8px 16px',
+                            padding: '12px 32px',
+                            backgroundColor: '#ff9800',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '6px',
+                            fontSize: '1.1rem',
+                            cursor: 'pointer',
+                            fontWeight: 'bold'
+                        }}
+                    >
+                        Manage Posts
+                    </button>
+                </div>
+                {/* Manage Products */}
+                <div style={{
+                    padding: '32px',
+                    border: '1px solid #ddd',
+                    borderRadius: '12px',
+                    backgroundColor: '#fff',
+                    boxShadow: '0 4px 24px #2222',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
+                }}>
+                    <h3 style={{ color: '#225', fontWeight: 'bold', fontSize: '2rem', marginBottom: 12 }}>Product Management</h3>
+                    <p style={{ color: '#333', fontSize: '1.2rem', marginBottom: 24 }}>Manage products on the platform</p>
+                    <button
+                        onClick={() => navigate('/admin/products')}
+                        style={{
+                            padding: '12px 32px',
                             backgroundColor: '#28a745',
                             color: 'white',
                             border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer'
+                            borderRadius: '6px',
+                            fontSize: '1.1rem',
+                            cursor: 'pointer',
+                            fontWeight: 'bold'
                         }}
                     >
-                        Manage Content
-                    </button>
-                </div>
-
-                <div style={{
-                    padding: '20px',
-                    border: '1px solid #ddd',
-                    borderRadius: '8px',
-                    backgroundColor: '#f8f9fa'
-                }}>
-                    <h3>Analytics</h3>
-                    <p>View platform statistics and reports</p>
-                    <button
-                        onClick={handleAnalytics}
-                        style={{
-                            padding: '8px 16px',
-                            backgroundColor: '#ffc107',
-                            color: 'black',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        View Analytics
+                        Manage Products
                     </button>
                 </div>
             </div>

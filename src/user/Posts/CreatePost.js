@@ -4,9 +4,10 @@ import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 
 const POSTS_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/posts';
-const IMAGE_UPLOAD_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/posts/upload-image';
+//const IMAGE_UPLOAD_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/posts/upload-image';
 const CATEGORY_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/category';
-
+const TAG_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/tag';
+const IMAGE_UPLOAD_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/posts/upload-base64';
 const CreatePost = () => {
     const navigate = useNavigate();
     const editorRef = useRef(null);
@@ -15,10 +16,12 @@ const CreatePost = () => {
     const [categoryId, setCategoryId] = useState('');
     const [userId, setUserId] = useState('');
     const [categories, setCategories] = useState([]);
+    const [tags, setTags] = useState([]);
+    const [tagId, setTagId] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Fetch categories from API
+    // Fetch categories and tags from API
     const fetchCategories = async () => {
         try {
             const response = await fetch(CATEGORY_API);
@@ -32,6 +35,19 @@ const CreatePost = () => {
             console.error('Error fetching categories:', error);
         }
     };
+    const fetchTags = async () => {
+        try {
+            const response = await fetch(TAG_API);
+            const data = await response.json();
+            if (response.ok) {
+                setTags(data.tags || []);
+            } else {
+                console.error('Failed to fetch tags:', data);
+            }
+        } catch (error) {
+            console.error('Error fetching tags:', error);
+        }
+    };
 
     useEffect(() => {
         // Get user_id from sessionStorage
@@ -41,8 +57,9 @@ const CreatePost = () => {
             setUserId(parsedUserData.user_id.toString());
         }
 
-        // Fetch categories
+        // Fetch categories and tags
         fetchCategories();
+        fetchTags();
 
         if (editorRef.current && !quillRef.current) {
             quillRef.current = new Quill(editorRef.current, {
@@ -76,7 +93,7 @@ const CreatePost = () => {
                     const base64 = await fileToBase64(file);
                     const base64Data = base64.split(',')[1]; // Remove data:image/jpeg;base64, prefix
                     // Upload image as base64
-                    const res = await fetch('https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/posts/upload-base64', {
+                    const res = await fetch(IMAGE_UPLOAD_API, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -114,7 +131,7 @@ const CreatePost = () => {
         setError('');
         setLoading(true);
         const content_html = quillRef.current.root.innerHTML;
-        if (!title || !userId || !categoryId || !content_html) {
+        if (!title || !userId || !categoryId || !tagId || !content_html) {
             setError('All fields are required.');
             setLoading(false);
             return;
@@ -127,12 +144,13 @@ const CreatePost = () => {
                     title,
                     user_id: Number(userId),
                     content_html,
-                    category_id: Number(categoryId)
+                    category_id: Number(categoryId),
+                    tag_id: Number(tagId)
                 })
             });
             const data = await res.json();
             if (res.ok) {
-                navigate('/');
+                navigate('/dashboard#posts');
             } else {
                 setError(data.error || 'Failed to create post');
             }
@@ -168,6 +186,23 @@ const CreatePost = () => {
                                 {categories.map(category => (
                                     <option key={category.category_id} value={category.category_id}>
                                         {category.category_name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div style={{ marginBottom: 20 }}>
+                            <label htmlFor="tagId" style={{ display: 'block', marginBottom: 6, color: '#222', fontWeight: 'bold' }}>Tag:</label>
+                            <select
+                                id="tagId"
+                                value={tagId}
+                                onChange={e => setTagId(e.target.value)}
+                                style={{ width: '100%', padding: 10, borderRadius: 4, border: '1px solid #ccc', fontSize: '1rem' }}
+                                required
+                            >
+                                <option value="">Select a tag</option>
+                                {tags.map(tag => (
+                                    <option key={tag.tag_id} value={tag.tag_id}>
+                                        {tag.tag_name}
                                     </option>
                                 ))}
                             </select>
