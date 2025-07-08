@@ -5,6 +5,36 @@ const POSTS_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/a
 const COMMENTS_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/comment';
 const RATING_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/rating';
 
+const StarRating = ({ rating, reviewCount }) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    for (let i = 0; i < fullStars; i++) {
+        stars.push(
+            <span key={`full-${i}`} style={{ color: '#ffd700', fontSize: '16px' }}>★</span>
+        );
+    }
+    if (hasHalfStar) {
+        stars.push(
+            <span key="half" style={{ color: '#ffd700', fontSize: '16px' }}>☆</span>
+        );
+    }
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    for (let i = 0; i < emptyStars; i++) {
+        stars.push(
+            <span key={`empty-${i}`} style={{ color: '#ddd', fontSize: '16px' }}>☆</span>
+        );
+    }
+    return (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '10px' }}>
+            <div style={{ display: 'flex' }}>{stars}</div>
+            <span style={{ fontSize: '12px', color: '#666', marginLeft: '5px' }}>
+                ({rating.toFixed(1)} • {reviewCount} reviews)
+            </span>
+        </div>
+    );
+};
+
 const PostDetailPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -23,6 +53,7 @@ const PostDetailPage = () => {
     const [submittingRating, setSubmittingRating] = useState(false);
     const [commentError, setCommentError] = useState('');
     const [ratingError, setRatingError] = useState('');
+    const [hidingComment, setHidingComment] = useState(null);
 
     const fetchComments = async (page = 1) => {
         setCommentsLoading(true);
@@ -117,6 +148,37 @@ const PostDetailPage = () => {
         }
     };
 
+    const handleHideComment = async (commentId) => {
+        console.log('handleHideComment called', userData, commentId);
+        if (!userData || userData.role_id !== 1) {
+            console.log('Not admin or not logged in');
+            return;
+        }
+        setHidingComment(commentId);
+        try {
+            const res = await fetch(`${COMMENTS_API}/update/${commentId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    status_id: 2
+                })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                console.log('Hide comment success', data);
+                fetchComments(currentPage);
+            } else {
+                console.error('Failed to hide comment:', data.error);
+                alert('Failed to hide comment: ' + (data.error || 'Unknown error'));
+            }
+        } catch (err) {
+            console.error('Network error hiding comment:', err);
+            alert('Network error: ' + err.message);
+        } finally {
+            setHidingComment(null);
+        }
+    };
+
     useEffect(() => {
         // Check for user authentication
         const userDataFromSession = sessionStorage.getItem('userData');
@@ -168,7 +230,9 @@ const PostDetailPage = () => {
                     <h3 style={{ fontSize: '1.8rem', color: '#222', marginBottom: '20px', borderBottom: '2px solid #4f8cff', paddingBottom: '10px' }}>
                         Rate this Post
                     </h3>
-
+                    <div style={{ marginBottom: 16 }}>
+                        <StarRating rating={post.average_rating || 0} reviewCount={post.review_count || 0} />
+                    </div>
                     {!userData ? (
                         <div style={{
                             textAlign: 'center',
@@ -345,6 +409,26 @@ const PostDetailPage = () => {
                                     }}>
                                         {comment.comment}
                                     </div>
+                                    {userData && userData.role_id === 1 && (
+                                        <div style={{ marginTop: '10px', textAlign: 'right' }}>
+                                            <button
+                                                onClick={() => { console.log('Clicked', comment.comment_id); handleHideComment(comment.comment_id); }}
+                                                disabled={hidingComment === comment.comment_id}
+                                                style={{
+                                                    padding: '6px 12px',
+                                                    backgroundColor: '#dc3545',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '4px',
+                                                    cursor: hidingComment === comment.comment_id ? 'not-allowed' : 'pointer',
+                                                    fontSize: '0.9rem',
+                                                    opacity: hidingComment === comment.comment_id ? 0.6 : 1
+                                                }}
+                                            >
+                                                {hidingComment === comment.comment_id ? 'Hiding...' : 'Hide Comment'}
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
 

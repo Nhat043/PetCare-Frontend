@@ -41,6 +41,7 @@ const Login = () => {
                 sessionStorage.setItem('userData', JSON.stringify({
                     user_id: data.user_id,
                     role_id: data.role_id,
+                    full_name: data.full_name,
                     email: formData.email
                 }));
                 // Notify other components

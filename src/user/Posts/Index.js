@@ -50,21 +50,35 @@ const StarRating = ({ rating, reviewCount }) => {
     );
 };
 
-const PostsIndex = () => {
+// Add a function to get status color
+const getStatusColor = (status) => {
+    if (!status) return '#b85c00';
+    const s = status.toLowerCase();
+    if (s === 'published') return '#28a745';
+    if (s === 'draft') return '#007bff';
+    if (s === 'deleted') return '#dc3545';
+    if (s === 'archived') return '#888';
+    return '#b85c00';
+};
+
+const PostsIndex = ({ adminView = false }) => {
     const [posts, setPosts] = useState([]);
     const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, total_pages: 1 });
     const [search, setSearch] = useState('');
     const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedTag, setSelectedTag] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const fetchPosts = async (page = 1, limit = 10, search = '', category = null) => {
+    const fetchPosts = async (page = 1, limit = 10, search = '', category = null, tag = null) => {
         setLoading(true);
         setError('');
         let url = `${POSTS_API}?page=${page}&limit=${limit}`;
+        if (!adminView) url += `&status_id=2`;
         if (search) url += `&title=${encodeURIComponent(search)}`;
         if (category) url += `&category_id=${category}`;
+        if (tag) url += `&tag_id=${tag}`;
         try {
             const res = await fetch(url);
             const data = await res.json();
@@ -82,9 +96,9 @@ const PostsIndex = () => {
     };
 
     useEffect(() => {
-        fetchPosts(pagination.page, pagination.limit, search, selectedCategory);
+        fetchPosts(pagination.page, pagination.limit, search, selectedCategory, selectedTag);
         // eslint-disable-next-line
-    }, [pagination.page, search, selectedCategory]);
+    }, [pagination.page, search, selectedCategory, selectedTag]);
 
     const handleSearch = (e) => {
         setSearch(e.target.value);
@@ -103,14 +117,21 @@ const PostsIndex = () => {
                     setSelectedCategory(catId);
                     setPagination(p => ({ ...p, page: 1 }));
                 }}
+                selectedTag={selectedTag}
+                onSelectTag={tagId => {
+                    setSelectedTag(tagId);
+                    setPagination(p => ({ ...p, page: 1 }));
+                }}
             />
             <div style={{ flex: 1 }}>
-                <button
-                    style={{ marginBottom: 20, padding: '10px 24px', background: '#007bff', color: '#fff', border: 'none', borderRadius: 6, fontSize: '1.1rem', cursor: 'pointer' }}
-                    onClick={() => navigate('/post/create')}
-                >
-                    Create a Post
-                </button>
+                {!adminView && (
+                    <button
+                        style={{ marginBottom: 20, padding: '10px 24px', background: '#007bff', color: '#fff', border: 'none', borderRadius: 6, fontSize: '1.1rem', cursor: 'pointer' }}
+                        onClick={() => navigate('/post/create')}
+                    >
+                        Create a Post
+                    </button>
+                )}
                 <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
                     <input
                         type="text"
@@ -153,7 +174,13 @@ const PostsIndex = () => {
                                         onClick={() => navigate(`/posts/${post.post_id}`)}
                                     >
                                         <div style={{ fontWeight: 'bold', fontSize: '1.15rem', marginBottom: 10, color: '#007bff' }}>{post.title}</div>
-                                        <div style={{ color: '#555', fontSize: '1rem', marginBottom: '5px' }}>Category ID: {post.category_id}</div>
+                                        <div style={{ color: '#555', fontSize: '1rem', marginBottom: '5px' }}>Animal: {post.category_name}</div>
+                                        <div style={{ color: '#555', fontSize: '1rem', marginBottom: '5px' }}>Tag: {post.tag_name}</div>
+                                        {adminView && (
+                                            <div style={{ color: getStatusColor(post.status_name), fontSize: '0.95rem', marginBottom: '5px', fontWeight: 'bold' }}>
+                                                Status: {post.status_name || post.status_id}
+                                            </div>
+                                        )}
                                         <div style={{ color: '#888', fontSize: '0.9rem', marginBottom: '10px' }}>
                                             {new Date(post.created_at).toLocaleDateString()}
                                         </div>
