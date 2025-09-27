@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { API_ENDPOINTS } from '../../config/api';
 
 const UserProfile = () => {
     const [user, setUser] = useState(null);
@@ -7,7 +8,7 @@ const UserProfile = () => {
 
     useEffect(() => {
         if (!userId) return;
-        fetch(`https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/auth/id/${userId}`)
+        fetch(`${API_ENDPOINTS.AUTH_BY_ID}/${userId}`)
             .then(res => res.json())
             .then(data => setUser(data.user));
     }, [userId]);

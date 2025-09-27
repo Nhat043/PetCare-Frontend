@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CategorySidebar from '../../components/CategorySidebar';
-
-const PRODUCTS_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/products';
+import { API_ENDPOINTS } from '../../config/api';
 
 // Star Rating Component
 const StarRating = ({ rating, reviewCount }) => {
@@ -48,7 +47,7 @@ const ProductIndex = () => {
     const fetchProducts = async (page = 1, limit = 10, search = '', category = null, tag = null) => {
         setLoading(true);
         setError('');
-        let url = `${PRODUCTS_API}?page=${page}&limit=${limit}`;
+        let url = `${API_ENDPOINTS.PRODUCTS}?page=${page}&limit=${limit}`;
         if (search) url += `&name=${encodeURIComponent(search)}`;
         if (category) url += `&category_id=${category}`;
         if (tag) url += `&tag_id=${tag}`;

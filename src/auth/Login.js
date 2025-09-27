@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -23,7 +24,7 @@ const Login = () => {
         setMessage('');
 
         try {
-            const response = await fetch('https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/auth/login', {
+            const response = await fetch(API_ENDPOINTS.LOGIN, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

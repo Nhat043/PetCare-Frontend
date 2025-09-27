@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../../config/api';
 
 const UserManagement = () => {
     const navigate = useNavigate();
@@ -14,7 +15,7 @@ const UserManagement = () => {
     const fetchUsers = async () => {
         try {
             setLoading(true);
-            const response = await fetch('https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/auth');
+            const response = await fetch(API_ENDPOINTS.AUTH);
             if (!response.ok) {
                 throw new Error('Failed to fetch users');
             }

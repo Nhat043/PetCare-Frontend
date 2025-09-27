@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../../config/api';
 
 const CreateProduct = () => {
     const navigate = useNavigate();
@@ -26,7 +27,7 @@ const CreateProduct = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await fetch('https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/category');
+            const response = await fetch(API_ENDPOINTS.CATEGORY);
             const data = await response.json();
             setCategories(data.categories || []);
         } catch (error) {
@@ -37,7 +38,7 @@ const CreateProduct = () => {
 
     const fetchTags = async () => {
         try {
-            const response = await fetch('https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/tag');
+            const response = await fetch(API_ENDPOINTS.TAG);
             const data = await response.json();
             setTags(data.tags || []);
         } catch (error) {
@@ -70,7 +71,7 @@ const CreateProduct = () => {
                     const base64Data = reader.result.split(',')[1]; // Remove data:image/...;base64, prefix
 
                     try {
-                        const response = await fetch('https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/products/upload-base64', {
+                        const response = await fetch(API_ENDPOINTS.PRODUCTS_UPLOAD_BASE64, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -124,7 +125,7 @@ const CreateProduct = () => {
                 stock: parseInt(formData.stock)
             };
 
-            const response = await fetch('https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/products', {
+            const response = await fetch(API_ENDPOINTS.PRODUCTS, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
