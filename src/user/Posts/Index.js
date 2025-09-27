@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CategorySidebar from '../../components/CategorySidebar';
-
-const POSTS_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/posts';
+import { API_ENDPOINTS } from '../../config/api';
 
 // Star Rating Component
 const StarRating = ({ rating, reviewCount }) => {
@@ -74,7 +73,7 @@ const PostsIndex = ({ adminView = false }) => {
     const fetchPosts = async (page = 1, limit = 10, search = '', category = null, tag = null) => {
         setLoading(true);
         setError('');
-        let url = `${POSTS_API}?page=${page}&limit=${limit}`;
+        let url = `${API_ENDPOINTS.POSTS}?page=${page}&limit=${limit}`;
         if (!adminView) url += `&status_id=2`;
         if (search) url += `&title=${encodeURIComponent(search)}`;
         if (category) url += `&category_id=${category}`;

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PostsIndex from '../../user/Posts/Index';
+import { API_ENDPOINTS } from '../../config/api';
 
 const DRAFT_STATUS_ID = 1;
 const PUBLISHED_STATUS_ID = 2;
 const REJECTED_STATUS_ID = 4;
-const POSTS_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/posts';
 
 const PostManagement = () => {
     const navigate = useNavigate();
@@ -28,7 +28,7 @@ const PostManagement = () => {
         setLoadingDrafts(true);
         setError('');
         try {
-            const res = await fetch(`${POSTS_API}?status_id=1&page=1&limit=50`);
+            const res = await fetch(`${API_ENDPOINTS.POSTS}?status_id=1&page=1&limit=50`);
             const data = await res.json();
             if (res.ok) {
                 setDraftPosts(data.posts || []);
@@ -46,7 +46,7 @@ const PostManagement = () => {
         setError('');
         setDraftDetail(null);
         try {
-            const res = await fetch(`${POSTS_API}/${postId}`);
+            const res = await fetch(`${API_ENDPOINTS.POSTS}/${postId}`);
             const data = await res.json();
             if (res.ok) {
                 setDraftDetail(data.post || data);
@@ -63,7 +63,7 @@ const PostManagement = () => {
         setActionLoading(true);
         setError('');
         try {
-            const res = await fetch(`${POSTS_API}/${draftDetail.post_id}`, {
+            const res = await fetch(`${API_ENDPOINTS.POSTS}/${draftDetail.post_id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status_id: PUBLISHED_STATUS_ID })
@@ -88,7 +88,7 @@ const PostManagement = () => {
         setActionLoading(true);
         setError('');
         try {
-            const res = await fetch(`${POSTS_API}/${draftDetail.post_id}`, {
+            const res = await fetch(`${API_ENDPOINTS.POSTS}/${draftDetail.post_id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status_id: REJECTED_STATUS_ID })

@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
-
-const CATEGORY_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/category';
-const TAG_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/tag';
+import { API_ENDPOINTS } from '../config/api';
 
 const CategorySidebar = ({ selectedCategory, onSelectCategory, selectedTag, onSelectTag }) => {
     const [categories, setCategories] = useState([]);
     const [tags, setTags] = useState([]);
 
     useEffect(() => {
-        fetch(CATEGORY_API)
+        fetch(API_ENDPOINTS.CATEGORY)
             .then(res => res.json())
             .then(data => setCategories(data.categories || []));
-        fetch(TAG_API)
+        fetch(API_ENDPOINTS.TAG)
             .then(res => res.json())
             .then(data => setTags(data.tags || []));
     }, []);

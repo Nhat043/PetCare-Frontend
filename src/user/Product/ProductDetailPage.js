@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-
-const PRODUCTS_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/products';
-const COMMENTS_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/comment/product';
-const COMMENT_POST_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/comment';
-const RATING_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/rating';
+import { API_ENDPOINTS } from '../../config/api';
 
 const StarRating = ({ rating, reviewCount }) => {
     const stars = [];
@@ -69,7 +65,7 @@ const ProductDetailPage = () => {
             setLoading(true);
             setError('');
             try {
-                const res = await fetch(`${PRODUCTS_API}/${id}`);
+                const res = await fetch(`${API_ENDPOINTS.PRODUCTS}/${id}`);
                 const data = await res.json();
                 if (res.ok) {
                     setProduct(data.product || data.data);
@@ -89,7 +85,7 @@ const ProductDetailPage = () => {
         setCommentsLoading(true);
         setCommentsError('');
         try {
-            const res = await fetch(`${COMMENTS_API}/${id}?page=${page}&limit=10`);
+            const res = await fetch(`${API_ENDPOINTS.COMMENTS_PRODUCT}/${id}?page=${page}&limit=10`);
             const data = await res.json();
             if (res.ok) {
                 setComments(data.comments || []);
@@ -123,7 +119,7 @@ const ProductDetailPage = () => {
         setSubmittingComment(true);
         setCommentError('');
         try {
-            const res = await fetch(COMMENT_POST_API, {
+            const res = await fetch(API_ENDPOINTS.COMMENTS, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -156,7 +152,7 @@ const ProductDetailPage = () => {
         setSubmittingRating(true);
         setRatingError('');
         try {
-            const res = await fetch(RATING_API, {
+            const res = await fetch(API_ENDPOINTS.RATING, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -188,7 +184,7 @@ const ProductDetailPage = () => {
         }
         setHidingComment(commentId);
         try {
-            const res = await fetch(`${COMMENTS_API}/update/${commentId}`, {
+            const res = await fetch(`${API_ENDPOINTS.COMMENTS_PRODUCT}/update/${commentId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -2,12 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
-
-const POSTS_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/posts';
-//const IMAGE_UPLOAD_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/posts/upload-image';
-const CATEGORY_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/category';
-const TAG_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/tag';
-const IMAGE_UPLOAD_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/posts/upload-base64';
+import { API_ENDPOINTS } from '../../config/api';
 const CreatePost = () => {
     const navigate = useNavigate();
     const editorRef = useRef(null);
@@ -24,7 +19,7 @@ const CreatePost = () => {
     // Fetch categories and tags from API
     const fetchCategories = async () => {
         try {
-            const response = await fetch(CATEGORY_API);
+            const response = await fetch(API_ENDPOINTS.CATEGORY);
             const data = await response.json();
             if (response.ok) {
                 setCategories(data.categories || []);
@@ -37,7 +32,7 @@ const CreatePost = () => {
     };
     const fetchTags = async () => {
         try {
-            const response = await fetch(TAG_API);
+            const response = await fetch(API_ENDPOINTS.TAG);
             const data = await response.json();
             if (response.ok) {
                 setTags(data.tags || []);
@@ -93,7 +88,7 @@ const CreatePost = () => {
                     const base64 = await fileToBase64(file);
                     const base64Data = base64.split(',')[1]; // Remove data:image/jpeg;base64, prefix
                     // Upload image as base64
-                    const res = await fetch(IMAGE_UPLOAD_API, {
+                    const res = await fetch(API_ENDPOINTS.POSTS_UPLOAD_BASE64, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -137,7 +132,7 @@ const CreatePost = () => {
             return;
         }
         try {
-            const res = await fetch(POSTS_API, {
+            const res = await fetch(API_ENDPOINTS.POSTS, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

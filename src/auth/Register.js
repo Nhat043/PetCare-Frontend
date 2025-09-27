@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-
-const REGISTER_API = 'https://0h1aeqb3z9.execute-api.ap-southeast-2.amazonaws.com/api/v1/auth';
+import { API_ENDPOINTS } from '../config/api';
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -28,7 +27,7 @@ const Register = () => {
         }
         setIsLoading(true);
         try {
-            const response = await fetch(REGISTER_API, {
+            const response = await fetch(API_ENDPOINTS.REGISTER, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
