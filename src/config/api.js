@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://z5v3avgw66.execute-api.ap-southeast-2.amazonaws.com/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://mslcbzocwi.execute-api.ap-southeast-2.amazonaws.com/api';
 
 // API Endpoints
 export const API_ENDPOINTS = {

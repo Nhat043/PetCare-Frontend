@@ -51,6 +51,19 @@ const PostDetailPage = () => {
     const [commentError, setCommentError] = useState('');
     const [ratingError, setRatingError] = useState('');
     const [hidingComment, setHidingComment] = useState(null);
+    const [postAuthor, setPostAuthor] = useState(null);
+
+    const fetchPostAuthor = async (userId) => {
+        try {
+            const res = await fetch(`${API_ENDPOINTS.AUTH_BY_ID}/${userId}`);
+            const data = await res.json();
+            if (res.ok) {
+                setPostAuthor(data.user);
+            }
+        } catch (err) {
+            console.error('Failed to fetch post author:', err);
+        }
+    };
 
     const fetchComments = async (page = 1) => {
         setCommentsLoading(true);
@@ -190,7 +203,12 @@ const PostDetailPage = () => {
                 const res = await fetch(`${API_ENDPOINTS.POSTS}/${id}`);
                 const data = await res.json();
                 if (res.ok) {
-                    setPost(data.post || data.data);
+                    const postData = data.post || data.data;
+                    setPost(postData);
+                    // Fetch post author information
+                    if (postData.user_id) {
+                        fetchPostAuthor(postData.user_id);
+                    }
                     // Fetch comments after post is loaded
                     fetchComments(1);
                 } else {
@@ -215,8 +233,8 @@ const PostDetailPage = () => {
                 <button onClick={() => navigate(-1)} style={{ position: 'absolute', top: 24, right: 48, background: 'none', border: 'none', fontSize: '2rem', cursor: 'pointer', color: '#888' }}>&times;</button>
                 <h2 style={{ marginBottom: 24, textAlign: 'center', fontSize: '2.5rem', color: '#222' }}>{post.title}</h2>
                 <div style={{ display: 'flex', justifyContent: 'center', gap: 40, marginBottom: 32, fontSize: '1.1rem', color: '#444' }}>
-                    <div><strong>User ID:</strong> {post.user_id}</div>
-                    <div><strong>Category ID:</strong> {post.category_id}</div>
+                    <div><strong>Username:</strong> {postAuthor ? postAuthor.full_name : 'Loading...'}</div>
+                    <div><strong>Category:</strong> {post.category_name || 'Loading...'}</div>
                 </div>
                 <div style={{ border: '2px solid #4f8cff', borderRadius: '10px', padding: '36px', background: '#f0f6ff', fontSize: '1.7rem', textAlign: 'center', color: '#222', fontWeight: 'bold', width: '90vw', maxWidth: '100vw', margin: '0 auto' }}
                     dangerouslySetInnerHTML={{ __html: post.content_html }}
